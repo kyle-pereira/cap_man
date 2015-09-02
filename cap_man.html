@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>
+			Cap Man - game
+		</title>
+		<h1>
+		<font color="yellow">
+		<center>
+			<div id="wurdz">
+				Cap Man v0.1
+			</div>
+		</center>
+		</font>
+		</h1>
+		<script>
+			var sequenceMeasure = 0;
+			
+			window.addEventListener("keydown", checkKeyPressed, false);
+
+			
+			function checkKeyPressed(e) {
+				if (e.keyCode == "40" && sequenceMeasure == 0) {
+					startSequence();
+					sequenceMeasure = 1;
+				}else if (e.keyCode == "37" && sequenceMeasure == 0) {
+					startSequence();
+					sequenceMeasure = 1;
+				}else if (e.keyCode == "38" && sequenceMeasure == 0) {
+					startSequence();
+					sequenceMeasure = 1;
+				}else if (e.keyCode == "39" && sequenceMeasure == 0) {
+					startSequence();
+					sequenceMeasure = 1;
+				}
+			}
+			
+			function startSequence()  {
+			
+				document.getElementById("wurdz").innerHTML = "Use arrow keys to move";
+				
+				setTimeout(sequence1, 5000);
+			}
+			
+			function sequence1()  {
+				
+				document.getElementById("wurdz").innerHTML = "Have Fun!";
+			}
+			
+		</script>
+		</br>
+		</br>
+		
+	</head>
+
+	<body style="background-color:black;">
+		<center>
+		<canvas id="canvas" width="750" height="525">
+		<style type="text/css">
+			canvas { border: 13px groove yellow; }
+		</style>
+		</canvas>
+		
+		
+		<script>
+		
+			var images = {};
+			var totalresources = 10;
+			var numresourcesLoaded = 0;
+			var fps = 20;
+			var context = document.getElementById('canvas').getContext("2d");
+			var charX = -400;
+			var charY = 160;
+			var maxEyeHeight = 12;
+			var curEyeHeight = maxEyeHeight;
+			var eyeOpenTime = 0;
+			var timeBtwBlinks = 2500;
+			var blinkUpdateTime = 200;                    
+			var blinkTimer = setInterval(updateBlink, blinkUpdateTime);
+			var chompDuration = 10;
+			var chompCurrent = 0;
+			var a = -400;
+			var b = 160;
+			var c = -400;
+			var d = 160;
+			var i;
+			var p;
+			var platformDetect;
+			var jumpTime = 0;
+			var refreshIntervalId;
+			var redrawer;
+			
+			loadImage("1440538449");
+			loadImage("1440538904");
+			loadImage("1440539267");
+			loadImage("1440773617");
+			loadImage("1440774266");
+			loadImage("1440774671");
+			loadImage("1440775014");
+			loadImage("1441202484");
+			loadImage("1441202687");
+			loadImage("1441202767");
+			
+			function jumpCal()  {
+				jumpTime = 1;
+				setTimeout(jumpRes, 1750);
+			}
+			
+			function jumpRes()  {
+				jumpTime = 0;
+			}
+			
+			function gravityControl()  {
+				
+				if (charY <= platformDetect) {
+					charY = charY + 3;
+					b = b + 3;
+					d = d + 3;
+				}
+			}
+			
+			function detectPlatform()  {
+				
+				platformDetect = 160;
+				
+				//160 kills once levels running
+			}
+			
+			function jumpUp()  {
+				charY = charY - 5;
+				b = b - 5;
+				d = d - 5;
+			}
+			
+			function stopRefresh()  {
+				clearInterval(refreshIntervalId);
+			}
+			
+			window.addEventListener("keydown", checkKeyPressed, false);
+			
+			function checkKeyPressed(e) {
+			
+				if (e.keyCode == "38" && jumpTime == 0) {
+					refreshIntervalId = setInterval(jumpUp, 5);
+					setTimeout(stopRefresh, 500);
+					jumpCal();
+				}else if (e.keyCode == "37") {
+					charX = charX - 8;
+					a = a - 8;
+					c = c - 8;
+					clearInterval(redrawer);
+					redrawer = setInterval(redraw, 1000 / fps);
+				}else if (e.keyCode == "39") {
+					charX = charX + 8;
+					a = a + 8;
+					c = c + 8;
+					clearInterval(redrawer);
+					redrawer = setInterval(redraw2, 1000 / fps);
+				}
+			}
+			
+			function chompDown()  {
+				for (chompCurrent = 0; chompCurrent < chompDuration; chompCurrent++) {
+					b = b + 1;
+					d = d - 1;
+				}
+				setTimeout(chompUp, 200);
+			}
+			
+			function chompUp()  {
+				for (chompCurrent = 0; chompCurrent < chompDuration; chompCurrent++) {
+					b = b - 1;
+					d = d + 1;
+				}
+				setTimeout(chompDown, 200);
+			}
+				
+			function loadImage(name) {
+			
+				images[name] = new Image();
+				images[name].onload = function()  {
+					resourceLoaded();
+				}
+				images[name].src = "./resources/" + name + ".png";
+			}
+			
+			function resourceLoaded()  {
+				numresourcesLoaded += 1;
+				if(numresourcesLoaded === totalresources)  {
+					redrawer = setInterval(redraw, 1000 / fps);
+					setInterval(gravityControl, 10);
+					setTimeout(chompDown, 250);
+					setTimeout(gravityControl, 500);
+				}
+			}
+  
+			function redraw() {
+				var x = charX;
+				var y = charY;
+				canvas.width = canvas.width; // clears the canvas 
+				
+				context.drawImage(images["1440538449"], x, y);
+				context.drawImage(images["1440538904"], a - 24, b + 36);
+				context.drawImage(images["1440539267"], c - 28, d + 72);
+				
+				detectPlatform();
+				drawEllipse(x + 470, y + 322, 7, curEyeHeight); //Eye
+			}
+			
+			function redraw2() {
+				var x = charX;
+				var y = charY;
+				canvas.width = canvas.width; // clears the canvas 
+				
+				context.drawImage(images["1441202484"], x, y);
+				context.drawImage(images["1441202687"], a - 24, b + 36);
+				context.drawImage(images["1441202767"], c - 28, d + 72);
+				
+				detectPlatform();
+				drawEllipse(x + 470, y + 322, 7, curEyeHeight); //Eye
+			}
+			
+			function drawEllipse(centerX, centerY, width, height) {
+	
+			  context.beginPath();
+			  
+			  context.moveTo(centerX, centerY - height/2);
+			  
+			  context.bezierCurveTo(
+				centerX + width/2, centerY - height/2,
+				centerX + width/2, centerY + height/2,
+				centerX, centerY + height/2);
+
+			  context.bezierCurveTo(
+				centerX - width/2, centerY + height/2,
+				centerX - width/2, centerY - height/2,
+				centerX, centerY - height/2);
+			 
+				context.fillStyle = "black";
+				context.fill();
+				context.closePath();	
+			}
+			
+			function updateBlink()  {
+				
+				eyeOpenTime += blinkUpdateTime;
+				
+				if(eyeOpenTime >= timeBtwBlinks) {
+					blink();
+				}
+			}
+			
+			function blink()  {
+				
+				curEyeHeight -= 1;
+				
+				if (curEyeHeight <= 0) {
+					eyeOpenTime = 0;
+					curEyeHeight = maxEyeHeight;
+				}else{
+					setTimeout(blink, 10);
+				}
+			}
+			
+		</script>
+		
+		</center>
+	</body>
+	
+</html>
