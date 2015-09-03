@@ -91,6 +91,7 @@
 			var jumpTime = 0;
 			var refreshIntervalId;
 			var redrawer;
+			var keyStone = 0;
 			
 			loadImage("1440538449");
 			loadImage("1440538904");
@@ -99,7 +100,7 @@
 			loadImage("1440774266");
 			loadImage("1440774671");
 			loadImage("1440775014");
-			loadImage("1441202484");
+			loadImage("1441238706");
 			loadImage("1441202687");
 			loadImage("1441202767");
 			
@@ -138,6 +139,17 @@
 				clearInterval(refreshIntervalId);
 			}
 			
+			window.addEventListener("keyup", checkKeyPressedUp);
+			
+			function checkKeyPressedUp(e) {
+			
+				if (e.keyCode == "37") {
+					keyStone = 0;
+				}else if (e.keyCode == "39") {
+					keyStone = 0;
+				}
+			}
+			
 			window.addEventListener("keydown", checkKeyPressed, false);
 			
 			function checkKeyPressed(e) {
@@ -150,14 +162,25 @@
 					charX = charX - 8;
 					a = a - 8;
 					c = c - 8;
-					clearInterval(redrawer);
-					redrawer = setInterval(redraw, 1000 / fps);
 				}else if (e.keyCode == "39") {
 					charX = charX + 8;
 					a = a + 8;
 					c = c + 8;
+				}
+			}
+			
+			window.addEventListener("keydown", checkKeyPressed2);
+
+			function checkKeyPressed2(e) {
+			
+				if (e.keyCode == "39" && keyStone == 0) {
+					clearInterval(redrawer);
+					redrawer = setInterval(redraw, 1000 / fps);
+					keyStone++;
+				}else if (e.keyCode == "37" && keyStone == 0) {
 					clearInterval(redrawer);
 					redrawer = setInterval(redraw2, 1000 / fps);
+					keyStone++;
 				}
 			}
 			
@@ -214,9 +237,10 @@
 				var y = charY;
 				canvas.width = canvas.width; // clears the canvas 
 				
-				context.drawImage(images["1441202484"], x, y);
-				context.drawImage(images["1441202687"], a - 24, b + 36);
-				context.drawImage(images["1441202767"], c - 28, d + 72);
+				context.drawImage(images["1441238706"], x, y + 18);
+				context.drawImage(images["1441202687"], a + 12, b + 6);
+				context.drawImage(images["1441202767"], c + 12, d + 26);
+				//18
 				
 				detectPlatform();
 				drawEllipse(x + 470, y + 322, 7, curEyeHeight); //Eye
